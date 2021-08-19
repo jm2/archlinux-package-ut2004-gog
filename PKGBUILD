@@ -15,42 +15,37 @@ epoch=1
 arch=('i686' 'x86_64')
 url="https://www.gog.com/game/unreal_tournament_2004_ece"
 license=('custom')
-depends=('sdl' 'openal' 'lgogdownloader' 'libstdc++5')
+depends=('sdl' 'openal' 'lgogdownloader' 'libstdc++5' 'innoextract')
 conflicts=('ut2004' 'ut2004-steam')
 install=ut2004.install
 changelog=ChangeLog
-#source=("http://planet64bit.de/fileZ/ut2004-lnxpatch3369.tar.bz2"
-source=("setup_unreal_tournament_2004_1.0_(18947)-1.bin::gogdownloader://unreal_tournament_2004_ece/en1installer1"
+source=("setup_unreal_tournament_2004_1.0_(18947).exe::gogdownloader://unreal_tournament_2004_ece/en1installer0"
+    "setup_unreal_tournament_2004_1.0_(18947)-1.bin::gogdownloader://unreal_tournament_2004_ece/en1installer1"
     "https://github.com/jm2/archlinux-package-ut2004-steam/raw/master/ut2004-lnxpatch$_pkgvermaj-$_pkgvermin.tar.bz2"
     "ut2004.desktop"
     "ut2004.png"
-    "ut2004-install.sh"
-    "ut2004-update.sh"
     "ut2004.sh")
-md5sums=('0fa447e05fe5a38e0e32adf171be405e'
+md5sums=('243376d34413b830324c5879ac2f9cfd'
+         'a211e2a6feed7334bb3b7deef6b858b5'
+         '0fa447e05fe5a38e0e32adf171be405e'
          'f952ba5de805cb475f487644fe16f99b'
          '145fb11c4e768ecb65396f51ac29e743'
-         '5608b9b891788ae3d6a53afaf2a370d2'
-         '1119a2bbec7211ee11c939941af3cb48'
          '85623fe9fecd0678e4f12902c22d7272')
 
 package() {
-
     # Making sure directories exist.
     install -d $pkgdir/usr/share/{applications,pixmaps,licenses}
     install -d $pkgdir/opt/ut2004
     install -d $pkgdir/opt/ut2004/{Animations,Help,Textures,Web,Benchmark,ForceFeedback,KarmaData,Maps,Music,StaticMeshes,Sounds,Speech,System}
     install -d $pkgdir/usr/bin/
 
-    # Install UT2004 Linux patch data. Will later do a non-clobber
-    # move over the top of it.
+    # Install the GOG UT2004 data.
+    innoextract "$srcdir/setup_unreal_tournament_2004_1.0_(18947).exe" -d "$pkgdir/opt/ut2004/"
+
+    # Install UT2004 Linux patch data.
     cp -R $srcdir/UT2004-Patch/* $pkgdir/opt/ut2004
 
     # Install helper scripts.
-    install -D -m 755 $srcdir/ut2004-install.sh \
-         $pkgdir/opt/ut2004/Scripts/ut2004-install
-    install -D -m 755 $srcdir/ut2004-update.sh \
-         $pkgdir/opt/ut2004/Scripts/ut2004-update
     install -D -m 755 $srcdir/ut2004.sh \
          $pkgdir/opt/ut2004/Scripts/ut2004
 
@@ -68,10 +63,6 @@ package() {
 
     # Create symlinks to add the ut2004 startup and utility scripts to usr/bin
     ln -s /opt/ut2004/Scripts/ut2004 $pkgdir/usr/bin/ut2004 || return 1
-    ln -s /opt/ut2004/Scripts/ut2004-install $pkgdir/usr/bin/ut2004-install || return 1
-    ln -s /opt/ut2004/Scripts/ut2004-update $pkgdir/usr/bin/ut2004-update || return 1
-    # chmod 755 $pkgdir/usr/bin/*
-
 
     if [ "$CARCH" == "x86_64" ]
     then

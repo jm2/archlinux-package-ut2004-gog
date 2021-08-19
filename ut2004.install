@@ -1,7 +1,6 @@
 post_install() {
 
-    echo "To complete installation, run /opt/ut2004/Scripts/ut2004-install as root. This prompts for the CD key and then triggers the update script to install and update ut2004.
-This requires approximately 6G of disk space."
+    echo "To complete installation, write your UT2004 cdkey to /opt/ut2004/System/CDkey as root."
 }
 
 post_remove() {
